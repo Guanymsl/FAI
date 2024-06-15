@@ -28,26 +28,20 @@ def card_to_numeric(card):
 
     return value
 
-class IfelsePlayer(BasePokerPlayer):
-    def __init__(self):
-        self.br = 1000
-        self.state = None
-
+class MontePlayer(BasePokerPlayer):
     def declare_action(self, valid_actions, hole_card, round_state):
         street = round_state['street']
 
-        if self.state == 'WIN':
-            return 'fold', 0
-
         if street == 'preflop':
-            return self.gto_preflop_strategy(valid_actions, hole_card, round_state)
+            return self.gto(valid_actions, hole_card, round_state)
         else:
-            return self.monte_carlo_postflop_strategy(valid_actions, hole_card, round_state)
+            return self.monte_carlo(valid_actions, hole_card, round_state)
 
-    def gto_preflop_strategy(self, valid_actions, hole_card, round_state):
+    def gto(self, valid_actions, hole_card, round_state):
         hole_num = (card_to_numeric(hole_card[0]), card_to_numeric(hole_card[1]))
         raise_amount = valid_actions[2]['amount']['max']
         call_amount = valid_actions[1]['amount']
+
         if hole_num[0] == hole_num[1] or min(hole_num[0], hole_num[1]) >= 10:
             if raise_amount == -1:
                 return 'call', call_amount
@@ -65,7 +59,7 @@ class IfelsePlayer(BasePokerPlayer):
             
         return 'fold', 0 
 
-    def monte_carlo_postflop_strategy(self, valid_actions, hole_card, round_state):
+    def monte_carlo(self, valid_actions, hole_card, round_state):
         raise_amount = valid_actions[2]['amount']['max']
         call_amount = valid_actions[1]['amount']
 
@@ -74,13 +68,16 @@ class IfelsePlayer(BasePokerPlayer):
         if win_prob > 0.7:
             if raise_amount == -1:
                 return 'call', call_amount
+
             return 'raise', min(raise_amount, round_state['pot']['main']['amount'] * 3)
-        elif win_prob > 0.4:
+
+        if win_prob > 0.4:
             return 'call', call_amount
-        else:
-            if call_amount == 0:
-                return 'call', 0
-            return 'fold', 0
+        
+        if call_amount == 0:
+            return 'call', 0
+
+        return 'fold', 0
 
     def monte_carlo_simulation(self, hole_card, community_card, iterations=100):
         win_count = 0
@@ -108,25 +105,13 @@ class IfelsePlayer(BasePokerPlayer):
         return win_count / iterations
 
     def receive_game_start_message(self, game_info):
-        self.player_num = game_info['player_num']
-        self.stack = game_info['rule']['initial_stack']
-        self.round = game_info['rule']['max_round']
-        self.blind = game_info['rule']['small_blind_amount']
+        pass
 
     def receive_round_start_message(self, round_count, hole_card, seats):
-        self.current_round = round_count
-
-        if (self.round - self.current_round) % 2 == 0:
-            if self.br - self.blind * (3 * (self.round - self.current_round) / 2) >= self.stack * self.player_num / 2:
-                self.state = 'WIN'
-        else:
-            if self.br - self.blind * (3 * (self.round - self.current_round) // 2 + 2) >= self.stack * self.player_num / 2:
-                self.state = 'WIN'
+        pass
 
     def receive_street_start_message(self, street, round_state):
-        for player in round_state['seats']:
-            if player['name'] == 'Ifelse':
-                self.br = player['stack']
+        pass
 
     def receive_game_update_message(self, action, round_state):
         pass
@@ -135,5 +120,5 @@ class IfelsePlayer(BasePokerPlayer):
         pass
 
 def setup_ai():
-    return IfelsePlayer()
+    return MontePlayer()
 

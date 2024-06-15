@@ -3,12 +3,13 @@ from game.game import setup_config, start_poker
 from agents.call_player import setup_ai as call_ai
 from agents.random_player import setup_ai as random_ai
 from agents.console_player import setup_ai as console_ai
+
 from agents.allin_player import setup_ai as allin_ai
 from agents.aof_player import setup_ai as aof_ai
 from agents.ifelse_player import setup_ai as ifelse_ai
 from agents.sklearn_player import setup_ai as sklearn_ai
 from agents.qlearning_player import setup_ai as qlearning_ai
-from agents.monte import setup_ai as monte_ai
+from agents.monte_player import setup_ai as monte_ai
 
 from baseline0 import setup_ai as baseline0_ai
 from baseline1 import setup_ai as baseline1_ai
@@ -19,7 +20,7 @@ from baseline5 import setup_ai as baseline5_ai
 from baseline6 import setup_ai as baseline6_ai
 from baseline7 import setup_ai as baseline7_ai
 
-iterations = 10
+iterations = 100
 win = []
 for num in range(1, 8):
     cnt = 0
