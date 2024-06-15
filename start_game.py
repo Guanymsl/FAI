@@ -8,6 +8,7 @@ from agents.aof_player import setup_ai as aof_ai
 from agents.ifelse_player import setup_ai as ifelse_ai
 from agents.sklearn_player import setup_ai as sklearn_ai
 from agents.qlearning_player import setup_ai as qlearning_ai
+from agents.monte import setup_ai as monte_ai
 
 from baseline0 import setup_ai as baseline0_ai
 from baseline1 import setup_ai as baseline1_ai
@@ -43,11 +44,12 @@ for num in range(1, 8):
         #config.register_player(name="AOF", algorithm=aof_ai())
         #config.register_player(name="Ifelse", algorithm=ifelse_ai())
         #config.register_player(name="Sklearn", algorithm=sklearn_ai())
-        config.register_player(name="Qlearning", algorithm=qlearning_ai())
+        #config.register_player(name="Qlearning", algorithm=qlearning_ai())
+        config.register_player(name="Monte", algorithm=monte_ai())
     
         game_result = start_poker(config)
         for player in game_result['players']:
-            if player['name'] == 'Qlearning' and player['stack'] > 1000:
+            if player['name'] == 'Monte' and player['stack'] > 1000:
                 cnt += 1
 
     win.append(cnt)
