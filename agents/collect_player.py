@@ -1,10 +1,12 @@
 from game.players import BasePokerPlayer
 
 
-class CallPlayer(
+class CollectPlayer(
     BasePokerPlayer
 ):  # Do not forget to make parent class as "BasePokerPlayer"
-
+    
+    def __init__(self):
+        self.results=[]
     #  we define the logic to make an action through this method. (so this method would be the core of your AI)
     def declare_action(self, valid_actions, hole_card, round_state):
         # valid_actions format => [fold_action_info, call_action_info, raise_action_info]
@@ -25,7 +27,10 @@ class CallPlayer(
         pass
 
     def receive_round_result_message(self, winners, hand_info, round_state):
-        pass
+        results.append((winners, hand_info, round_state))
+
+    def collect_results(self):
+        print(results)
 
 def setup_ai():
-    return CallPlayer()
+    return CollectPlayer()
